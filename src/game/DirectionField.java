@@ -27,6 +27,7 @@ public class DirectionField {
         obst_dist_field = new int[lenX][lenY];
         el = px_length;
     }
+    
     public void add_obstacles(UnPassable[] unp){
         for (UnPassable i : unp) {
             if (i != null){
@@ -41,6 +42,7 @@ public class DirectionField {
             } 
         }
     }
+    
     public void copy_obst_field(int x, int y){
         accesed_field = new boolean[width][];
         for(int i = x; i < width + x; i++)
@@ -64,6 +66,7 @@ public class DirectionField {
         wave1.add(new SVector(ax,ay));
         create_dist_field_recursor(wave1, 1);
     }
+    
     public void updateDistField(LinkedList<Enemy> enemy, int screenx, int screeny){
         for(int i=0;i<enemy.size();i++){
             int xcord = (int) Math.round((enemy.get(i).posx - screenx) / el);
@@ -72,6 +75,7 @@ public class DirectionField {
             dist_field[xcord][ycord] += 1;
         }
     }
+    
     public void createVectorField(){
         dict_vector_field = new SVector[width][height];
         for(int i = 0; i < width; i++){
@@ -81,6 +85,7 @@ public class DirectionField {
             }
         }
     }
+    
     public SVector return_vector(int i, int j){
         int top, bottom, left, right;
         
@@ -108,6 +113,7 @@ public class DirectionField {
         int diry = top - bottom;
         return new SVector(dirx, diry);
     }
+    
     private void create_dist_field_recursor(LinkedList<SVector> wave, int dist){
         for(int i = 0; i < wave.size(); i++)
             dist_field[wave.get(i).x][wave.get(i).y] = dist;
@@ -126,6 +132,7 @@ public class DirectionField {
             }
         return x;
     }
+    
     private LinkedList surrounding_list(int x, int y, boolean[][] df){
         LinkedList<SVector> list = new LinkedList<SVector>();
         if(x > 0 && df[x - 1][y] == false){
@@ -146,6 +153,7 @@ public class DirectionField {
         }
         return list;
     }
+    
     private static boolean[] bpartArray(boolean[] array, int size, int start) {
     boolean[] part = new boolean[size];
     try{
@@ -153,6 +161,7 @@ public class DirectionField {
     }catch(Exception e){}
     return part;
     }
+    
     private static int[] partArray(int[] array, int size, int start) {
     int[] part = new int[size];
     try{
@@ -160,6 +169,7 @@ public class DirectionField {
     }catch(Exception e){}
     return part;
     }
+    
     public static void printField(){
         StringBuilder str = new StringBuilder();
         for (int i = 0; i < dist_field[0].length; i++) {
@@ -170,6 +180,7 @@ public class DirectionField {
         }
         System.out.println(str);
     }
+    
     public void printVectorField(){
         StringBuilder str = new StringBuilder();
         for (int i = 0; i < dict_vector_field[0].length; i++) {
@@ -180,6 +191,7 @@ public class DirectionField {
         }
         System.out.println(str);
     }
+    
     public void printObstField(){
         StringBuilder str = new StringBuilder();
         for (int i = 0; i< obst_dist_field.length; i++) {
@@ -190,6 +202,7 @@ public class DirectionField {
         }
         System.out.println(str);
     }
+    
     public void printBoolField(){
         StringBuilder str = new StringBuilder();
         for (int i = 0; i< accesed_field[0].length; i++) {

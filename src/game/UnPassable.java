@@ -5,9 +5,8 @@
 package game;
 
 import java.awt.Color;
-import java.awt.GradientPaint;
 import java.awt.Graphics2D;
-import java.awt.RadialGradientPaint;
+//import java.awt.RadialGradientPaint;
 import java.awt.Rectangle;
 
 public class UnPassable extends Rectangle{
@@ -27,9 +26,9 @@ public class UnPassable extends Rectangle{
     }
     public void draw(Graphics2D g2, double screenx,double screeny){
         g2.setColor(color);
-        Color[] fuckingColors = new Color[]{Color.blue,Color.red};
-        RadialGradientPaint grad = new RadialGradientPaint((float) (x - screenx), (float) (y - screeny),500,new float[]{0.1f,0.9f},new Color[]{Color.blue,Color.red});
-        g2.setPaint(grad);
+        //Color[] colors = new Color[]{Color.blue,Color.red};
+        //RadialGradientPaint grad = new RadialGradientPaint((float) (x - screenx), (float) (y - screeny),500,new float[]{0.1f,0.9f},colors);
+        g2.setPaint(Color.BLACK);
         g2.fillRect((int)(x-screenx), (int)(y - screeny), width, height);
         g2.setColor(Color.LIGHT_GRAY);
         g2.fillRect((int)(x-screenx), (int)(y - screeny), 10, height);

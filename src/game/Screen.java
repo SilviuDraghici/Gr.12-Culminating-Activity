@@ -21,14 +21,15 @@ import javax.swing.JPanel;
 public class Screen extends JPanel implements Runnable{
     
     private LinkedList<Bullet> bullet = new LinkedList();
-    private LinkedList<Splosion> splosion = new LinkedList();
-    private LinkedList<Bomb> bomb = new LinkedList();
-    private LinkedList<Enemy> enemy= new LinkedList();
+    private final LinkedList<Splosion> splosion = new LinkedList();
+    private final LinkedList<Bomb> bomb = new LinkedList();
+    private final LinkedList<Enemy> enemy= new LinkedList();
     private LinkedList<PowerUp> power= new LinkedList();
     private Sound bkrnd;
     
+    long frameRate;
     
-    private final int period = 16;
+    private final int period = 25;
     
     // |width of player   |thickness of border,game field size
     private final int pSize=50,brdr=7,fieldx=5000,fieldy=5000,boomSize=35;
@@ -39,13 +40,13 @@ public class Screen extends JPanel implements Runnable{
     private final GridLine[] yLines=new GridLine[gridNum];
     //player speed
     private double increment;
-    private final int ogincrement = 8;
+    private final int ogincrement = 12;
     private final Color grid = Color.GRAY;
     private final Color border = Color.LIGHT_GRAY;
     //screen location
     private int screenx,screeny;
     // how many bullets to shoot at once,shots per second,shoot counter,when to fire
-    private int spread=3,sps=10,shootCount=0,shootWhen=1000/period/sps;
+    private int spread=2,sps=3,shootCount=0,shootWhen=1000/period/sps;
     //player location
     private int posx=fieldx/2-pSize/2,posy=fieldy/2-pSize/2,score=0,multiplyer=1;
     private boolean gameOver=false,alive=true,visible=true,paused=false;
@@ -162,6 +163,8 @@ public class Screen extends JPanel implements Runnable{
             paintScreen();
             
             timeDiff = System.currentTimeMillis() - beforeTime;
+            if(timeDiff !=0)
+                frameRate = 1000/timeDiff;
             sleepTime = period - timeDiff;
 
             if(sleepTime < 0){
@@ -172,6 +175,7 @@ public class Screen extends JPanel implements Runnable{
                 Thread.sleep(sleepTime);
             }
             catch(InterruptedException e){}
+            frameRate = 1000/(System.currentTimeMillis() - beforeTime);
             beforeTime = System.currentTimeMillis();
             if(keys.escKey()){
                 System.exit(0);
@@ -205,7 +209,7 @@ public class Screen extends JPanel implements Runnable{
         enemy_unpassable_collisions();
         resolve_enemy_collisions();
         powerUpdate();
-        //amIAlive();
+        amIAlive();
     }
     //moves screen when appropriate
     private void posUpdate(){
@@ -281,7 +285,7 @@ public class Screen extends JPanel implements Runnable{
             }
         }
     }
-    private void spawnmorefuckingbullets(double x, double y){
+    private void spawnmorebullets(double x, double y){
         bullet.add(new Bullet(x + 10,y - 7,x,y,Math.toRadians(0)));
         bullet.getLast().update();
         bullet.getLast().update();
@@ -517,7 +521,7 @@ public class Screen extends JPanel implements Runnable{
     int spawnWhen=120;
     int spawnTick=20;
     int spawnNum=25;
-    int spawnMax=200;
+    int spawnMax=50;
     private void spawn(){
         if(spawnTick>=30){
             spawnNum++;
@@ -820,7 +824,7 @@ public class Screen extends JPanel implements Runnable{
         Color[] clrs = new Color[]{Color.cyan,Color.black};
         RadialGradientPaint grad = new RadialGradientPaint((float) (posx - screenx + pSize/2), (float) (posy - screeny+ pSize/2),500,new float[]{0.0f,0.8f},clrs);
         g2.setPaint(grad);
-        g2.fillOval(posx - screenx + pSize/2 - 500, posy - screeny - 500 + pSize/2, 1000, 1000);
+        //g2.fillOval(posx - screenx + pSize/2 - 500, posy - screeny - 500 + pSize/2, 1000, 1000);
         if(distclr)
             renderDistField();
         if(!distclr)
@@ -846,6 +850,8 @@ public class Screen extends JPanel implements Runnable{
             g2.fillOval(posx-screenx,posy-screeny,pSize,pSize);
             g2.setColor(Color.BLACK);
             g2.fillOval((int)(posx-screenx+pSize*modify),(int)(posy-screeny+pSize*modify),(int)(pSize-pSize*modify*2),(int)(pSize-pSize*modify*2));
+            g2.setColor(Color.CYAN);
+            g2.fillRect(posx - screenx + 10, posy - screeny + 10, 30, 30);
         }
         //collisions_line();
         renderHUD();
@@ -862,7 +868,7 @@ public class Screen extends JPanel implements Runnable{
         }
     }
     private void renderDistField(){
-        int m = 2;
+        int m = 3;
         for (int i = 0; i < x.dist_field.length; i++) {
             for (int j = 0; j < x.dist_field[0].length; j++) {
                 if(m*x.dist_field[i][j] <= 255)
@@ -887,7 +893,7 @@ public class Screen extends JPanel implements Runnable{
         }
     }
     private void renderVectorField(){
-        g2.setColor(Color.white);
+        g2.setColor(Color.black);
         for (int i = 0; i < x.dist_field.length; i++) {
             for (int j = 0; j < x.dist_field[0].length; j++) {
                 SVector sv = x.dict_vector_field[i][j];
@@ -998,6 +1004,8 @@ public class Screen extends JPanel implements Runnable{
         g2.drawString("HighScore:"+highScoreS,width-186-brdr,20+brdr);
         g2.setColor(powerC);
         g2.drawString("x"+multiplyer,brdr+142,20+brdr);
+        g2.setColor(Color.white);
+        g2.drawString(frameRate+"fps",width/2-400,20 + brdr);
     }
     private void renderObstacles(){
         for(UnPassable i : unp)
